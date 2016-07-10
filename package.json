@@ -1,0 +1,27 @@
+{
+  "name": "burrows-wheeler-transorm",
+  "version": "1.0.0",
+  "description": "Efficient Burrows-Wheeler Transform implementation",
+  "main": "dist/bwt.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/SPY/bwt.git"
+  },
+  "keywords": [
+    "compression",
+    "transform"
+  ],
+  "author": "Ilya Rezvov <rezvov.ilya@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SPY/bwt/issues"
+  },
+  "homepage": "https://github.com/SPY/bwt#readme",
+  "devDependencies": {
+    "typescript": "^2.0.0-dev.20160707"
+  }
+}
