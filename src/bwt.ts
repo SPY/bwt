@@ -4,13 +4,25 @@ const enum Order {
   GT = 1
 }
 
+type ArrayLike =
+  string
+  | any[]
+  | Uint8Array
+  | Int8Array
+  | Uint16Array
+  | Int16Array
+  | Uint32Array
+  | Int32Array
+  | Float32Array
+  | Float64Array
+
 export interface BWTransformed {
-  data: string,
+  data: string | any[],
   start: number,
   eof: number
 }
 
-export function bwt(input: string): BWTransformed {
+export function bwt(input: ArrayLike): BWTransformed {
   const len = input.length + 2
   const rotations = new Int32Array(len)
   for (let i = 0; i < len; i++) {
@@ -58,10 +70,14 @@ export function bwt(input: string): BWTransformed {
       data[added++] = input[real]
     }
   }
-  return { start, data: data.join(''), eof }
+  return {
+    start,
+    data: typeof input === 'string' ? data.join('') : data,
+    eof
+  }
 }
 
-export function ibwt({start, data, eof}: BWTransformed): string {
+export function ibwt({start, data, eof}: BWTransformed): string | any[] {
   const len = data.length + 2
   const sorted = new Int32Array(len)
   const permutations = new Int32Array(len)
@@ -99,5 +115,5 @@ export function ibwt({start, data, eof}: BWTransformed): string {
     result[i] = data[idx]
     current = permutations[current]
   }
-  return result.join('')
+  return typeof data === 'string' ? result.join('') : result
 }

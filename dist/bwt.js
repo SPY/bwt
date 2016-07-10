@@ -47,7 +47,11 @@ function bwt(input) {
             data[added++] = input[real];
         }
     }
-    return { start: start, data: data.join(''), eof: eof };
+    return {
+        start: start,
+        data: typeof input === 'string' ? data.join('') : data,
+        eof: eof
+    };
 }
 exports.bwt = bwt;
 function ibwt(_a) {
@@ -87,6 +91,6 @@ function ibwt(_a) {
         result[i] = data[idx];
         current = permutations[current];
     }
-    return result.join('');
+    return typeof data === 'string' ? result.join('') : result;
 }
 exports.ibwt = ibwt;
