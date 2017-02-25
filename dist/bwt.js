@@ -1,6 +1,11 @@
 "use strict";
-function bwt(input) {
+function array(length) {
+    return new Array(length);
+}
+function bwt(input, ctor) {
+    if (ctor === void 0) { ctor = array; }
     var len = input.length + 2;
+    var isString = typeof input === 'string';
     var rotations = new Int32Array(len);
     for (var i = 0; i < len; i++) {
         rotations[i] = i;
@@ -32,7 +37,7 @@ function bwt(input) {
     });
     var start = 0;
     var eof = 0;
-    var data = new Array(input.length);
+    var data = isString ? new Array(input.length) : ctor(input.length);
     var added = 0;
     for (var i = 0; i < len; i++) {
         var shift = rotations[i];
@@ -49,14 +54,16 @@ function bwt(input) {
     }
     return {
         start: start,
-        data: typeof input === 'string' ? data.join('') : data,
+        data: isString ? data.join('') : data,
         eof: eof
     };
 }
 exports.bwt = bwt;
-function ibwt(_a) {
+function ibwt(_a, ctor) {
     var start = _a.start, data = _a.data, eof = _a.eof;
+    if (ctor === void 0) { ctor = array; }
     var len = data.length + 2;
+    var isString = typeof data === 'string';
     var sorted = new Int32Array(len);
     var permutations = new Int32Array(len);
     for (var i_1 = 0; i_1 < len; i_1++) {
@@ -84,13 +91,13 @@ function ibwt(_a) {
         permutations[sorted[i_2]] = i_2;
     }
     var current = len - 1;
-    var result = new Array(len - 2);
+    var result = isString ? new Array(len - 2) : ctor(len - 2);
     var i = len - 2;
     while (i--) {
         var idx = current + (current < start ? 0 : (-1 + (current < eof ? 0 : -1)));
         result[i] = data[idx];
         current = permutations[current];
     }
-    return typeof data === 'string' ? result.join('') : result;
+    return isString ? result.join('') : result;
 }
 exports.ibwt = ibwt;

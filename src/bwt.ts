@@ -5,7 +5,6 @@ const enum Order {
 }
 
 type ArrayLike =
-  string
   | any[]
   | Uint8Array
   | Int8Array
@@ -16,14 +15,23 @@ type ArrayLike =
   | Float32Array
   | Float64Array
 
+type ArrayLikeAndString = ArrayLike | string
+
 export interface BWTransformed {
-  data: string | any[],
+  data: ArrayLikeAndString,
   start: number,
   eof: number
 }
 
-export function bwt(input: ArrayLike): BWTransformed {
+export type ArrayLikeConstructor = (length: number) => ArrayLike
+
+function array(length: number): any[] {
+  return new Array(length)
+}
+
+export function bwt(input: ArrayLikeAndString, ctor: ArrayLikeConstructor = array): BWTransformed {
   const len = input.length + 2
+  const isString = typeof input === 'string'
   const rotations = new Int32Array(len)
   for (let i = 0; i < len; i++) {
     rotations[i] = i
@@ -55,7 +63,7 @@ export function bwt(input: ArrayLike): BWTransformed {
   })
   let start = 0
   let eof = 0
-  const data = new Array(input.length)
+  const data = isString ? new Array(input.length) : ctor(input.length)
   let added = 0
   for (let i = 0; i < len; i++) {
     const shift = rotations[i]
@@ -72,13 +80,14 @@ export function bwt(input: ArrayLike): BWTransformed {
   }
   return {
     start,
-    data: typeof input === 'string' ? data.join('') : data,
+    data: isString ? data.join('') : data,
     eof
   }
 }
 
-export function ibwt({start, data, eof}: BWTransformed): string | any[] {
+export function ibwt({start, data, eof}: BWTransformed, ctor: ArrayLikeConstructor = array): ArrayLikeAndString {
   const len = data.length + 2
+  const isString = typeof data === 'string'
   const sorted = new Int32Array(len)
   const permutations = new Int32Array(len)
   for (let i = 0; i < len; i++) {
@@ -108,12 +117,12 @@ export function ibwt({start, data, eof}: BWTransformed): string | any[] {
     permutations[sorted[i]] = i
   }
   let current = len - 1
-  const result = new Array(len - 2)
+  const result = isString ? new Array(len - 2) : ctor(len - 2)
   let i = len - 2
   while (i--) {
     const idx = current + (current < start ? 0 : (-1 + (current < eof ? 0 : -1)))
     result[i] = data[idx]
     current = permutations[current]
   }
-  return typeof data === 'string' ? result.join('') : result
+  return isString ? result.join('') : result
 }

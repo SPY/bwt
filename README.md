@@ -27,4 +27,16 @@ const transformedTypedArray = bwt.bwt(TYPED_ARRAY)
 // result of transformation on any array-like object is array
 assert.deepEqual(transformedTypedArray.data, [ 41, 32, 1, 1, 33, 81 ])
 
+// also you can pass optional array-like container constructor
+function typedCtor(length) {
+    return new Uint16Array(length)
+}
+const transformedTypedArrayAsTyped = bwt.bwt(TEST_TYPED_ARRAY, typedCtor)
+assert(transformedTypedArrayAsTyped.data instanceof Uint16Array)
+assert.equal(transformedTypedArrayAsTyped.start, 4)
+assert.equal(transformedTypedArrayAsTyped.eof, 6)
+const inverseTypedArray = bwt.ibwt(transformedTypedArray, typedCtor)
+assert(inverseTypedArray instanceof Uint16Array)
+assert.deepEqual(inverseTypedArray, TEST_TYPED_ARRAY)
+
 ```
